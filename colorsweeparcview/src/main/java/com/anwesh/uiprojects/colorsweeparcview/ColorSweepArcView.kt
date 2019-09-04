@@ -16,23 +16,27 @@ import android.graphics.Path
 
 val colors : Array<String> = arrayOf("#1abc9c", "#9b59b6", "#e74c3c", "#3498db", "#e67e22")
 val scGap : Float = 0.01f
-val delay : Long = 30
+val delay : Long = 25
 val rFactor : Float = 3f
 val triFactor : Float = 3f
 val triColor : Int = Color.WHITE
 
 fun Int.inverse() : Float = 1f / this
 fun Float.maxScale(i : Int, n : Int) : Float = Math.max(0f, this - i * n.inverse())
-fun Float.divideScale(i : Int, n : Int) : Float = Math.min(n.inverse(), maxScale(i, n))
+fun Float.divideScale(i : Int, n : Int) : Float = Math.min(n.inverse(), maxScale(i, n)) * n
 
 fun Canvas.drawTriangle(size : Float, sc1 : Float, sc2 : Float, paint : Paint) {
+    var scale = 1f
+    if (sc2 > 0f) {
+        scale = sc2
+    }
     paint.color = triColor
     save()
-    scale(sc2, sc2)
+    scale(scale, scale)
     val path : Path = Path()
-    path.moveTo(-size, size - 2 * size * sc1)
+    path.moveTo(-size + size  * sc1, size - 2 * size * sc1)
     path.lineTo(0f, -size)
-    path.lineTo(size, size - 2 * size * sc1)
+    path.lineTo(size - size * sc1, size - 2 * size * sc1)
     drawPath(path, paint)
     restore()
 }
@@ -55,7 +59,7 @@ fun Canvas.drawCSANode(i : Int, scale : Float, sc : Float, paint : Paint) : Floa
     save()
     translate(w / 2, h / 2)
     drawArc(i, size, sc2, sc, paint)
-    drawTriangle(size, sc1, sc, paint)
+    drawTriangle(size / triFactor, sc1, sc, paint)
     restore()
     return sc2
 }
@@ -104,7 +108,7 @@ class ColorSweepArcView(ctx : Context) : View(ctx) {
             if (animated) {
                 cb()
                 try {
-                    Thread.sleep(50)
+                    Thread.sleep(delay)
                     view.invalidate()
                 } catch(ex : Exception) {
 
