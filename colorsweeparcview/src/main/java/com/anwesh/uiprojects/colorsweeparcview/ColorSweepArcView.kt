@@ -214,4 +214,13 @@ class ColorSweepArcView(ctx : Context) : View(ctx) {
             }
         }
     }
+
+    companion object {
+
+        fun create(activity : Activity) : ColorSweepArcView {
+            val view : ColorSweepArcView = ColorSweepArcView(activity)
+            activity.setContentView(view)
+            return view 
+        }
+    }
 }
