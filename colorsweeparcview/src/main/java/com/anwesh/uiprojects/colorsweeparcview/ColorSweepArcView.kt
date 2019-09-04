@@ -165,7 +165,31 @@ class ColorSweepArcView(ctx : Context) : View(ctx) {
                 return curr
             }
             cb()
-            return this 
+            return this
+        }
+    }
+
+    data class ColorSweepArc(var i : Int) {
+
+        private val root : CSANode = CSANode(0)
+        private var curr : CSANode = root
+        private var dir : Int = 1
+
+        fun draw(canvas : Canvas, paint : Paint) {
+            root.draw(canvas, 0f, paint)
+        }
+
+        fun update(cb : (Float) -> Unit) {
+            curr.update {
+                curr = curr.getNext(dir) {
+                    dir *= -1
+                }
+                cb(it)
+            }
+        }
+
+        fun startUpdating(cb : () -> Unit) {
+            curr.startUpdating(cb)
         }
     }
 }
