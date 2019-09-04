@@ -192,4 +192,26 @@ class ColorSweepArcView(ctx : Context) : View(ctx) {
             curr.startUpdating(cb)
         }
     }
+
+    data class Renderer(var view : ColorSweepArcView) {
+
+        private val csa : ColorSweepArc = ColorSweepArc(0)
+        private var animator : Animator = Animator(view)
+
+        fun render(canvas : Canvas, paint : Paint) {
+            canvas.drawColor(Color.parseColor("#BDBDBD"))
+            csa.draw(canvas, paint)
+            animator.animate {
+                csa.update {
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            csa.startUpdating {
+                animator.start()
+            }
+        }
+    }
 }
